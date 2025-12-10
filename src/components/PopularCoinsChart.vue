@@ -84,15 +84,15 @@ const fetchChartData = async () => {
   }
 };
 
-onMounted(() => {
+onMounted(async () => {
+  await coinsStore.fetchCoins();
   topCoins.value.forEach((coin, index) => {
     coinColors2.value[coin.id] = {
       backgroundColor: colors[index],
       borderColor: colors[index].replace("0.5", "1"),
     };
   });
-
-  fetchChartData();
+  await fetchChartData();
 });
 
 function formatPrice(price) {
@@ -111,10 +111,21 @@ function formatPrice(price) {
     return price.toFixed(2)
   }
 }
+const onIntervalChange = () => {
+  fetchChartData();
+};
 </script>
 
 <template>
+
   <div className="bg-[#1B2028] rounded-[10px] p-[20px] w-[1000px] flex flex-wrap justify-around">
+    <div>
+      <select v-model="selectedCoinData" @change="onIntervalChange" class="text-black p-1 rounded">
+        <option value="1DAY">1 hour (1DAY)</option>
+        <option value="7DAY">1 week (7DAY)</option>
+        <option value="1MTH">1 month (1MTH)</option>
+      </select>
+    </div>
     <h1 className="font-bold text-white w-full text-center mb-4 text-3xl">
       Today's most popular coins chart
     </h1>
